@@ -20,7 +20,7 @@ test_env: test_env.c $(OBJECTS)  $(HEADERS)
 	gcc $(CFLAGS) test_env.c $(OBJECTS) -o test_env
 
 update:
-	git pull https://github.com/comp530-f20/thsh.git lab0
+	git pull https://github.com/comp530-f22/thsh.git lab1
 
 
 clean:
