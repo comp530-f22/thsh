@@ -84,8 +84,10 @@ int create_job(void) {
   struct job *j = malloc(sizeof(struct job));
   j->id = ++job_counter;
   j->kidlets = NULL;
-  for (tmp = jobbies; tmp && tmp->next; tmp = tmp->next) ;
-  if (tmp) {
+  j->next = NULL;
+  if (jobbies) {
+    for (tmp = jobbies; tmp && tmp->next; tmp = tmp->next) ;
+    assert(tmp!=j);
     tmp->next = j;
   } else {
     jobbies = j;
@@ -93,17 +95,28 @@ int create_job(void) {
   return j->id;
 }
 
-/* Helper function to walk the job list and find
- * a given job.
- *
- * Returns NULL on failure, a job pointer on success.
+/* Helper function to walk the job list and find                                                                    
+ * a given job.                                                                                                     
+ *                                                                                                                  
+ * remove: If true, remove this job from the job list.                                                              
+ *                                                                                                                  
+ * Returns NULL on failure, a job pointer on success.                                                               
  */
-static struct job *find_job(int job_id) {
-  struct job *tmp;
+static struct job *find_job(int job_id, bool remove) {
+  struct job *tmp, *last = NULL;
   for (tmp = jobbies; tmp; tmp = tmp->next) {
     if (tmp->id == job_id) {
+      if (remove) {
+        if (last) {
+          last->next = tmp->next;
+        } else {
+          assert (tmp == jobbies);
+          jobbies = NULL;
+        }
+      }
       return tmp;
     }
+    last = tmp;
   }
   return NULL;
 }

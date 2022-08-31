@@ -101,5 +101,7 @@ int main(int argc, char **argv, char **envp) {
 
   }
 
-  return ret;
+  // Only return a non-zero value from main() if the shell itself
+  // has a bug.  Do not use this to indicate a failed command.
+  return 0;
 }
