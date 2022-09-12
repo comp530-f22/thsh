@@ -35,7 +35,7 @@ static char ** path_table;
  * Returns 0 on success, -errno on failure.
  */
 int init_path(void) {
-  /* Lab 0: Your code here */
+  /* Lab 1: Your code here */
 
   return 0;
 }
