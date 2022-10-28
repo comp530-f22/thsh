@@ -15,21 +15,21 @@ int main(int argc, char **argv, char **envp) {
   int ret = 0;
 
 
-  // Lab 1:
+  // Lab 2:
   // Add support for parsing the -d option from the command line
   // and handling the case where a script is passed as input to your shell
 
-  // Lab 1: Your code here
+  // Lab 2: Your code here
 
   ret = init_cwd();
   if (ret) {
-    printf("Error initializing the current working directory: %d\n", ret);
+    dprintf(2, "Error initializing the current working directory: %d\n", ret);
     return ret;
   }
 
   ret = init_path();
   if (ret) {
-    printf("Error initializing the path table: %d\n", ret);
+    dprintf(2, "Error initializing the path table: %d\n", ret);
     return ret;
   }
 
@@ -48,17 +48,17 @@ int main(int argc, char **argv, char **envp) {
     if (!input_fd) {
       ret = print_prompt();
       if (ret <= 0) {
-	// if we printed 0 bytes, this call failed and the program
-	// should end -- this will likely never occur.
-	finished = true;
-	break;
+        // if we printed 0 bytes, this call failed and the program
+        // should end -- this will likely never occur.
+        finished = true;
+        break;
       }
     }
 
     // Reset memory from the last iteration
     for(int i = 0; i < MAX_PIPELINE; i++) {
       for(int j = 0; j < MAX_ARGS; j++) {
-	parsed_commands[i][j] = NULL;
+        parsed_commands[i][j] = NULL;
       }
     }
 
@@ -72,7 +72,7 @@ int main(int argc, char **argv, char **envp) {
     // Pass it to the parser
     pipeline_steps = parse_line(buf, length, parsed_commands, &infile, &outfile);
     if (pipeline_steps < 0) {
-      printf("Parsing error.  Cannot execute command. %d\n", -pipeline_steps);
+      dprintf(2, "Parsing error.  Cannot execute command. %d\n", -pipeline_steps);
       continue;
     }
 
@@ -86,7 +86,7 @@ int main(int argc, char **argv, char **envp) {
     // command handling
     dprintf(1, "%s\n", cmd);
 
-    // In Lab 1, you will need to add code to actually run the commands,
+    // In Lab 2, you will need to add code to actually run the commands,
     // add debug printing, and handle redirection and pipelines, as
     // explained in the handout.
     //
@@ -96,7 +96,12 @@ int main(int argc, char **argv, char **envp) {
 
     // Do NOT change this if/printf - it is used by the autograder.
     if (ret) {
-      printf("Failed to run command - error %d\n", ret);
+      char buf [100];
+      int rv = snprintf(buf, 100, "Failed to run command - error %d\n", ret);
+      if (rv > 0)
+	write(1, buf, strlen(buf));
+      else
+	dprintf(2, "Failed to format the output (%d).  This shouldn't happen...\n", rv);
     }
 
   }
